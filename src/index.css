@@ -1,6 +1,8 @@
-body{
-    margin: 0;
-   font-family: "Poppins";
-   background: #eeeeee;
-   height: 100vh;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active{
+    background-color: #ffebf5;
+    border: 1px solid #ffb7b7;
 }

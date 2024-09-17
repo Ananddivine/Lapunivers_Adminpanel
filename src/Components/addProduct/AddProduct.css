@@ -67,3 +67,7 @@
         margin: 20px;
     }
 }
+.AddProduct textarea{
+    border: 1px solid #cccc;
+    outline: none;
+}
