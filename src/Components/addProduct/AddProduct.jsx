@@ -3,20 +3,23 @@ import './AddProduct.css';
 import upload_area from '../../assets/upload_area.svg';
 
 const AddProduct = () => {
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState([null, null, null, null]);
     const [productDetails, setProductDetails] = useState({
         name: "",
-        image: "",
-        category: "shop",
+        images: [],
+        category: "laptop",
         new_price: "",
         old_price: "",
-        description: "" // Added description field
+        description: ""
     });
 
-    const imageHandler = (e) => {
+    const imageHandler = (e, index) => {
         const file = e.target.files[0];
-        setImage(file);
-        setProductDetails({ ...productDetails, image: file.name }); // For displaying purposes only
+        const updatedImages = [...images];
+        updatedImages[index] = file;
+        setImages(updatedImages);
+        const updatedFileNames = updatedImages.map(img => img ? img.name : '');
+        setProductDetails({ ...productDetails, images: updatedFileNames });
     };
 
     const changeHandler = (e) => {
@@ -26,63 +29,63 @@ const AddProduct = () => {
     const Add_Product = async () => {
         console.log(productDetails);
         let responseData;
-      
+
         let formData = new FormData();
-        formData.append('product', image);
+        images.forEach((image) => {
+            if (image) formData.append('product_images', image);
+        });
+
         formData.append('name', productDetails.name);
         formData.append('category', productDetails.category);
         formData.append('new_price', productDetails.new_price);
         formData.append('old_price', productDetails.old_price);
-        formData.append('description', productDetails.description); // Include description
-      
+        formData.append('description', productDetails.description);
+
         try {
-          const response = await fetch('https://lapuniversbackend-production.up.railway.app/upload', {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-            },
-            body: formData,
-          });
-      
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-      
-          responseData = await response.json();
-      
-          if (responseData.success) {
-            console.log(responseData);
-      
-            // Update product details with the full image URL
-            const updatedProductDetails = {
-              ...productDetails,
-              image: responseData.Image_url,
-            };
-      
-            // Submit product details to the server
-            const productResponse = await fetch('https://lapuniversbackend-production.up.railway.app/addproduct', {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(updatedProductDetails),
+            const response = await fetch('https://lapuniversbackend-production.up.railway.app/upload', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                },
+                body: formData,
             });
-      
-            const productData = await productResponse.json();
-      
-            if (productData.success) {
-              alert("Product Added");
-            } else {
-              alert("Failed to Add Product");
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-          } else {
-            console.error('Failed to upload image:', responseData.message);
-          }
+
+            responseData = await response.json();
+
+            if (responseData.success) {
+                console.log(responseData);
+                const updatedProductDetails = {
+                    ...productDetails,
+                    images: responseData.image_urls,
+                };
+
+                const productResponse = await fetch('https://lapuniversbackend-production.up.railway.app/addproduct', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedProductDetails),
+                });
+
+                const productData = await productResponse.json();
+
+                if (productData.success) {
+                    alert("Product Added");
+                } else {
+                    alert("Failed to Add Product");
+                }
+            } else {
+                console.error('Failed to upload images:', responseData.message);
+            }
         } catch (error) {
-          console.error('Error during fetch:', error);
+            console.error('Error during fetch:', error);
         }
-      };
+    };
 
     return (
         <div className='AddProduct'>
@@ -114,12 +117,19 @@ const AddProduct = () => {
                 <p>Description</p>
                 <textarea value={productDetails.description} onChange={changeHandler} name='description' placeholder='Type Here' />
             </div>
-            <div className="addproduct-itemfield">
-                <label htmlFor='file-input'>
-                    <img src={image ? URL.createObjectURL(image) : upload_area} className='addproduct-thumnile-img' alt="" />
-                </label>
-                <input type="file" onChange={imageHandler} name='image' id='file-input' hidden />
+
+            {/* Add fields for each image in a grid layout */}
+            <div className="addproduct-images-container">
+                {images.map((image, index) => (
+                    <div key={index} className="addproduct-itemfield">
+                        <label htmlFor={`file-input-${index}`}>
+                            <img src={image ? URL.createObjectURL(image) : upload_area} className='addproduct-thumbnail-img' alt="" />
+                        </label>
+                        <input type="file" onChange={(e) => imageHandler(e, index)} id={`file-input-${index}`} hidden />
+                    </div>
+                ))}
             </div>
+
             <div className='addproduct-btn-container'>
                 <button onClick={Add_Product} className='addproduct-btn'>ADD</button>
             </div>

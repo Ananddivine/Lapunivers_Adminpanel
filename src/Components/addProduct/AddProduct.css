@@ -71,3 +71,17 @@
     border: 1px solid #cccc;
     outline: none;
 }
+
+.addproduct-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Adjusts columns based on screen size */
+    gap: 15px; /* Space between the images */
+    margin-top: 20px; /* Space above the grid */
+}
+
+.addproduct-thumbnail-img {
+    height: 120px; /* Maintain the height */
+    width: 120px; /* Maintain the width */
+    border-radius: 10px;
+    object-fit: contain;
+}

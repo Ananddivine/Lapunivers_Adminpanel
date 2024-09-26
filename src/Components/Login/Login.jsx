@@ -11,11 +11,12 @@ const Login = ({setToken}) => {
     e.preventDefault();
     try {
       const response = await axios.post('https://lapuniversbackend-production.up.railway.app/adminlogin', { email, password });
-     
+  
       if (response.data.success) {
-        // Store the token in localStorage or as a cookie for further requests
-        setToken(response.data.token)
+        // Store the token and user information in localStorage for further requests
+        setToken(response.data.token);
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userEmail', email); // Save the logged-in user's email
         toast.success('Login Successful');
       } else {
         toast.error('Invalid credentials');
@@ -25,6 +26,7 @@ const Login = ({setToken}) => {
       toast.error('An error occurred');
     }
   };
+  
 
   return (
     <div className='min-h-screen flex items-center justify-center w-full'>

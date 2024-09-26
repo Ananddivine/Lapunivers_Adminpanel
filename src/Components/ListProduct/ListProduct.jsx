@@ -7,7 +7,7 @@ const ListProduct = () => {
 
   const fetchInfo = async () => {
     try {
-      const response = await fetch('https://lapuniversbackend-production.up.railway.app/allproducts');
+      const response = await fetch('http://localhost:5000/allproducts');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -25,7 +25,7 @@ const ListProduct = () => {
 
   const remove_product = async (id) => {
     try {
-      const response = await fetch('https://lapuniversbackend-production.up.railway.app/removeproduct', {
+      const response = await fetch('http://localhost:5000/removeproduct', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -63,25 +63,25 @@ const ListProduct = () => {
         <p>Remove</p>
       </div>
       <div className="listproduct-allproduct">
-        <hr />
-        {allproduct.map((product, index) => {
-          console.log('Rendering product:', product); // Check product details
-          return (
-            <div key={product._id || index} className="listproduct-format-main listproduct-format">
-              <img 
-                src={product.image || 'https://via.https://lapuniversbackend-production.up.railway.app'} 
-                alt={product.name} 
-                className="listproduct-product-icon" 
-              />
-              <p>{product.name}</p>
-              <p>&{product.old_price}</p>
-              <p>&{product.new_price}</p>
-              <p>{product.category}</p>
-              <img onClick={() => remove_product(product.id)} src={cross_icon} alt="" className="listproduct-remove-icon" />
-            </div>
-          );
-        })}
+  <hr />
+  {allproduct.map((product, index) => {
+    console.log('Rendering product:', product); // Check product details
+    return (
+      <div key={product._id || index} className="listproduct-format-main listproduct-format">
+        <img 
+          src={product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150'} 
+          alt={product.name} 
+          className="listproduct-product-icon" 
+        />
+        <p>{product.name}</p>
+        <p>&{product.old_price}</p>
+        <p>&{product.new_price}</p>
+        <p>{product.category}</p>
+        <img onClick={() => remove_product(product.id)} src={cross_icon} alt="" className="listproduct-remove-icon" />
       </div>
+    );
+  })}
+</div>
     </div>
   );
 };
