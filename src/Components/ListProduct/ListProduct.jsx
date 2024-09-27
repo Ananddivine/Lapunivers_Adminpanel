@@ -7,7 +7,7 @@ const ListProduct = () => {
 
   const fetchInfo = async () => {
     try {
-      const response = await fetch('http://localhost:5000/allproducts');
+      const response = await fetch('https://lapuniversbackend-production.up.railway.app/allproducts');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -25,7 +25,7 @@ const ListProduct = () => {
 
   const remove_product = async (id) => {
     try {
-      const response = await fetch('http://localhost:5000/removeproduct', {
+      const response = await fetch('https://lapuniversbackend-production.up.railway.app/removeproduct', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
